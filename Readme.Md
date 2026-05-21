@@ -30,7 +30,7 @@ Build a RESTful API that mimics a payment processing backend. It must check for 
 ## 3. Getting Started
 
 1.  **Fork this Repository:** Do not clone it directly. Create a fork to your own GitHub account.
-2.  **Environment:** You may use **Node.js, Python, Java or Go, etc.**. You may use any database or in-memory store (Redis, SQLite, or a simple native Map/Dictionary variable).
+2.  **Environment:** You must use ** Java.**. You may use any database or in-memory store (Redis, SQLite, or a simple native Map/Dictionary variable).
 3.  **Submission:** Your final submission will be a link to your forked repository containing the source code and documentation.
 
 ---
