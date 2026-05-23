@@ -78,9 +78,9 @@ sequenceDiagram
     G-->>C: 409 CONFLICT
     Note right of G: "Idempotency key already used for different request body"
 
+```
 
 ---
-
 
 ## Setup Instructions
 
@@ -100,3 +100,6 @@ sequenceDiagram
 ```bash
 git clone https://github.com/Liesse205/SheCanCode-associate-Assessment-.git
 cd SheCanCode-associate-Assessment-
+
+
+
