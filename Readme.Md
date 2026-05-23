@@ -143,3 +143,14 @@ The API is now live at: http://localhost:8080
 
 Press Ctrl + C in the terminal.
 
+## API Documentation
+
+### Endpoint Details
+
+| Property | Value | 
+|-------------|---------|
+| URL | http://localhost:8080/process-payment | 
+| Method | POST | 
+| Content-Type | application/json | 
+ 
+
