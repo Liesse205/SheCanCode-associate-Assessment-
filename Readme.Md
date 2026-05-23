@@ -100,11 +100,13 @@ sequenceDiagram
 ```bash
 git clone https://github.com/Liesse205/SheCanCode-associate-Assessment-.git
 cd SheCanCode-associate-Assessment-
+```
 
 #### 2. Navigate to Project
 
 ```bash
 cd idempotency-gateway
+```
 
 #### 3. Build the Project
 
@@ -113,14 +115,18 @@ Using Maven wrapper (no need to install Maven separately):
 Windows:
 ```bash
 mvnw.cmd clean install
+```
 
 Mac/Linux:
 ```bash
 ./mvnw clean install
+```
 
 #### 4. Run the Application
 
+```bash
 ./mvnw spring-boot:run
+```
 
 #### 5. Verify Startup
 
@@ -129,6 +135,7 @@ Look for this message in the console:
 ```bash
 Started IndempotencyGatewayApplication in X seconds
 Tomcat started on port 8080 (http)
+```
 
 The API is now live at: http://localhost:8080
 
