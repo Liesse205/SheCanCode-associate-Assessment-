@@ -79,3 +79,23 @@ sequenceDiagram
     Note right of G: "Idempotency key already used for different request body"
 
 
+---
+
+## Setup Instructions
+
+### Prerequisites
+
+| Requirement | Version | Installation Link |
+|-------------|---------|-------------------|
+| Java JDK | 17+ | [Eclipse Temurin](https://adoptium.net/) |
+| Git | Latest | [git-scm.com](https://git-scm.com/) |
+| Maven | 3.8+ | Included via wrapper |
+| Postman (optional) | Latest | [postman.com](https://postman.com) |
+
+### Installation Steps
+
+#### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Liesse205/SheCanCode-associate-Assessment-.git
+cd SheCanCode-associate-Assessment-
