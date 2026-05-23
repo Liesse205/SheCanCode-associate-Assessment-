@@ -18,3 +18,21 @@ A production-ready idempotency layer that prevents double charging in payment sy
 
 ### System Flow Diagram
 
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Gateway
+    participant Storage
+    
+    Client->>Gateway: POST /process-payment
+    Note right of Client: Header: Idempotency-Key: abc123
+    
+    Gateway->>Storage: Check if key exists
+    Storage-->>Gateway: Key NOT found
+    
+    Gateway->>Gateway: Acquire lock for key
+    Gateway->>Gateway: Process payment (2 sec)
+    Gateway->>Storage: Store response
+    
+    Gateway-->>Client: 200 OK + Response
+
