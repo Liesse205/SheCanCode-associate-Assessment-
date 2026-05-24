@@ -375,7 +375,7 @@ public class IdempotencyCleanupScheduler {
 ```
 ### Why This Matters for Fintech
 
-| Benefit | Explaation |
+| Benefit | Explanation |
 |---------|------------|
 | Memory Management | Prevents unbounded growth in production systems | 
 | PCI Compliance | Meets payment industry standards for data retention | 
