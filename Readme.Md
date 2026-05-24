@@ -262,5 +262,88 @@ curl -X POST http://localhost:8080/process-payment \
   -H "Content-Type: application/json" \
   -d '{"amount": 500, "currency": "RWF"}'
 ```
+## Design Decisions
+### 1. In-Memory Storage with ConcurrentHashMap
+Decision: Used ConcurrentHashMap<String, StoredResponse> instead of a database.
 
+#### Why:
+
+- Performance: O(1) lookup time vs database RTT
+
+- Simplicity: No external dependencies to install
+
+- Thread-safety: Built-in concurrent operations
+
+- Trade-off: Not persistent across restarts (acceptable for this scale)
+
+- Production Alternative: Would replace with Redis for distributed deployments.
+
+### 2. Key-Specific Locking Pattern
+Decision: Each idempotency key has its own lock object.
+
+```java
+Object lock = keyLocks.computeIfAbsent(key, k -> new Object());
+synchronized (lock) { ... }
+```
+#### Why:
+
+- Prevents race conditions: Two requests with same key can't process simultaneously
+
+- Maintains performance: Different keys don't block each other
+
+- Implements bonus requirement: Handles "in-flight" concurrent requests
+
+#### Double-Check Pattern Used:
+
+```java
+if (storage.containsKey(key)) { ... }  // First check (optimization)
+synchronized (lock) {
+    if (storage.containsKey(key)) { ... }  // Second check (safety)
+    // Process payment
+}
+```
+This prevents the scenario where Request A and Request B both see "key not found" and both process.
+
+### 3. Null Safety with Objects.equals()
+Decision: Used Objects.equals() instead of direct .equals().
+
+```java
+if (!Objects.equals(stored.amount, request.getAmount())) { ... }
+```
+#### Why:
+
+- Prevents NullPointerException if either value is null
+
+- Handles malformed requests gracefully
+
+- Critical for production systems where data quality varies
+
+### 4. Lock Cleanup in Finally Block
+Decision: Removed locks in a finally block.
+
+```java
+try {
+    // Process payment
+} finally {
+    keyLocks.remove(key);  // Always executes
+}
+```
+#### Why:
+
+- Prevents memory leaks: Even if exception occurs, lock is removed
+
+- Self-healing: Unused locks don't accumulate
+
+- Production-ready: Common pattern in enterprise Java
+
+### 5. Input Validation First
+Decision: Validate all inputs before any business logic.
+
+#### Why:
+
+- Fail fast: Invalid requests rejected immediately
+
+- Security: Prevents injection attacks and malformed data
+
+- User experience: Clear error messages help clients debug
 
