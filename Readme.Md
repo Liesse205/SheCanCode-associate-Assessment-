@@ -4,7 +4,7 @@ A production-ready idempotency layer that prevents double charging in payment sy
 
 ## Table of Contents
 
-1. [Architecture Overview](#architecture-overview)
+- [Architecture Overview](#architecture-overview)
 - [Setup Instructions](#setup-instructions)
 - [API Documentation](#api-documentation)
 - [Design Decisions](#design-decisions)
