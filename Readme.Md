@@ -423,7 +423,3 @@ public class IdempotencyCleanupScheduler {
 | Postman | API Testing |
 | Git | Version control | 
 | GitHub | Repository hosting |
-
-  |←--200 + X-Cache-Hit----|                         |
-
-```
