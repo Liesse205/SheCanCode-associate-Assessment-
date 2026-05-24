@@ -152,5 +152,45 @@ Press Ctrl + C in the terminal.
 | URL | http://localhost:8080/process-payment | 
 | Method | POST | 
 | Content-Type | application/json | 
- 
+
+### Request Headers
+
+| Header | Required | Example | Description |
+|--------|----------|---------|-------------|
+| Idempotency-Key | YES | payment-abc-123 | Unique identifier for this transaction |
+| Content-Type | YES | application/json | Must be JSON format |
+
+### Request Body Schema
+
+```bash
+{
+    "amount": 100,
+    "currency": "RWF"
+}
+```
+| Field | Type | Required | Constraints | Description |
+|-------|------|----------|-------------|-------------|
+| amount | Integer | Yes | > 0 | Payment amount in smallest currency unit |
+| currency | String | Yes | Non-empty, 3 letters | ISO currency code (RWF, USD, EUR, etc.) |
+
+### Response Codes & Examples
+
+200 OK - First Request (Processing)
+Response Body:
+
+```bash
+{
+    "message": "Charged 100 RWF",
+    "amount": 100,
+    "currency": "RWF"
+}
+```
+Timing: Takes exactly 2 seconds (simulates bank API call)
+Headers:
+
+```bash
+Content-Type: application/json
+```
+
+
 
