@@ -15,7 +15,7 @@ public class PaymentController {
     // We use a separate lock per key to avoid blocking different clients' requests
     private final ConcurrentHashMap<String, Object> keyLocks = new ConcurrentHashMap<>();
 
-    @PostMapping("/process-payment")
+    @PostMapping("/process-payment") // User Story 1: POST endpoint
     public ResponseEntity<Map<String, Object>> processPayment(
             @RequestHeader("Idempotency-Key") String key,
             @RequestBody PaymentRequest request) {
@@ -39,18 +39,17 @@ public class PaymentController {
                     .body(Map.of("error", "Currency is required"));
         }
 
-        // If this key was seen before, what's stored is returned
         if (storage.containsKey(key)) {
             StoredResponse stored = storage.get(key);
 
-            // If amount or currency changed, the key is rejected
+            // User Story 3: If amount or currency changed, the key is rejected
             if (!Objects.equals(stored.amount, request.getAmount()) ||
                     !Objects.equals(stored.currency, request.getCurrency().toUpperCase())) {
                 return ResponseEntity
                         .status(HttpStatus.CONFLICT)
                         .body(Map.of("error", "Idempotency key already used for a different request body."));
             }
-            // The X-Cache-Hit: Return the original response without processing again
+            // User Story 2: Duplicate request returns cached response instantly
             return ResponseEntity
                     .status(200)
                     .header("X-Cache-Hit", "true")
@@ -61,11 +60,11 @@ public class PaymentController {
                     ));
         }
 
-        // Getting a lock specific to this key so other requests for same key will wait
+        // Bonus user story: In-Flight Check (Race Condition Handling)
         Object lock = keyLocks.computeIfAbsent(key, k -> new Object());
         synchronized (lock) {
             System.out.println("Processing request for key: " + key + " at " + System.currentTimeMillis());
-            // Double-check after acquiring lock
+            // Double-check after acquiring lock(prevents race condition)
             if (storage.containsKey(key)) {
                 StoredResponse stored = storage.get(key);
                 return ResponseEntity
@@ -79,7 +78,7 @@ public class PaymentController {
             }
 
             try {
-                // Simulation of real payment processing
+                // User Story 1: Simulation of payment processing with 2 second delay
                 Thread.sleep(2000);
 
                 // Saving the result so duplicates won't process again
@@ -87,7 +86,7 @@ public class PaymentController {
                         request.getAmount(),
                         request.getCurrency().toUpperCase()
                 ));
-                // Returning success to client
+
                 return ResponseEntity.ok(Map.of(
                         "message", "Charged " + request.getAmount() + " " + request.getCurrency().toUpperCase(),
                         "amount", request.getAmount(),
@@ -95,7 +94,7 @@ public class PaymentController {
                 ));
 
             } catch (InterruptedException e) {
-                // This happens if the server shuts down during processing and it restores the interrupt status
+                // Restore interrupt status if thread is interrupted
                 Thread.currentThread().interrupt();
                 return ResponseEntity
                         .status(HttpStatus.INTERNAL_SERVER_ERROR)
