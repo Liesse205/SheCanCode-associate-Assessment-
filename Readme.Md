@@ -175,7 +175,7 @@ Press Ctrl + C in the terminal.
 
 ### Response Codes & Examples
 
-200 OK - First Request (Processing)
+#### 200 OK - First Request (Processing)
 
 ##### Response Body:
 
