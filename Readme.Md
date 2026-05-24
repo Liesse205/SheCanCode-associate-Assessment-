@@ -424,6 +424,8 @@ public class IdempotencyCleanupScheduler {
 | Git | Version control | 
 | GitHub | Repository hosting |
 
+
+```
 CLIENT                  GATEWAY                  STORAGE
   |                        |                         |
   |--POST /process-payment→|                         |
@@ -441,3 +443,5 @@ CLIENT                  GATEWAY                  STORAGE
   |                        |--Key exists?----------→|
   |                        |←--Yes-------------------|
   |←--200 + X-Cache-Hit----|                         |
+
+```
