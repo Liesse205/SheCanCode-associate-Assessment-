@@ -175,7 +175,7 @@ Press Ctrl + C in the terminal.
 
 ### Response Codes & Examples
 
-#### 200 OK - First Request (Processing)
+200 OK - First Request (Processing)
 
 ##### Response Body:
 
@@ -186,7 +186,7 @@ Press Ctrl + C in the terminal.
     "currency": "RWF"
 }
 ```
-##### Timing: Takes exactly 2 seconds (simulates bank API call)
+Timing: Takes exactly 2 seconds (simulates bank API call)
 
 ##### Headers:
 
@@ -195,7 +195,7 @@ Content-Type: application/json
 ```
 #### 200 OK - Duplicate Request (Cache Hit)
 
-##### Response Body:(Identical to first response)
+Response Body:(Identical to first response)
 
 ##### Headers:
 
@@ -203,7 +203,7 @@ Content-Type: application/json
 Content-Type: application/json
 X-Cache-Hit: true
 ```
-##### Timing: Instant (no 2-second delay)
+Timing: Instant (no 2-second delay)
 
 
 
