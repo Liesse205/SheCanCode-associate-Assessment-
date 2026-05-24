@@ -9,7 +9,6 @@ A production-ready idempotency layer that prevents double charging in payment sy
 - [API Documentation](#api-documentation)
 - [Design Decisions](#design-decisions)
 - [Developer's Choice Feature](#developers-choice-feature)
-- [Test Results](#test-results)
 - [Tech Stack](#tech-stack)
 
 ---
@@ -269,13 +268,9 @@ Decision: Used ConcurrentHashMap<String, StoredResponse> instead of a database.
 #### Why:
 
 - Performance: O(1) lookup time vs database RTT
-
 - Simplicity: No external dependencies to install
-
 - Thread-safety: Built-in concurrent operations
-
 - Trade-off: Not persistent across restarts (acceptable for this scale)
-
 - Production Alternative: Would replace with Redis for distributed deployments.
 
 ### 2. Key-Specific Locking Pattern
@@ -288,9 +283,7 @@ synchronized (lock) { ... }
 #### Why:
 
 - Prevents race conditions: Two requests with same key can't process simultaneously
-
 - Maintains performance: Different keys don't block each other
-
 - Implements bonus requirement: Handles "in-flight" concurrent requests
 
 #### Double-Check Pattern Used:
@@ -313,9 +306,7 @@ if (!Objects.equals(stored.amount, request.getAmount())) { ... }
 #### Why:
 
 - Prevents NullPointerException if either value is null
-
 - Handles malformed requests gracefully
-
 - Critical for production systems where data quality varies
 
 ### 4. Lock Cleanup in Finally Block
@@ -331,9 +322,7 @@ try {
 #### Why:
 
 - Prevents memory leaks: Even if exception occurs, lock is removed
-
 - Self-healing: Unused locks don't accumulate
-
 - Production-ready: Common pattern in enterprise Java
 
 ### 5. Input Validation First
@@ -342,8 +331,95 @@ Decision: Validate all inputs before any business logic.
 #### Why:
 
 - Fail fast: Invalid requests rejected immediately
-
 - Security: Prevents injection attacks and malformed data
-
 - User experience: Clear error messages help clients debug
 
+## Developer's Choice Feature
+### Feature: TTL (Time-To-Live) for Idempotency Keys
+#### The Problem
+In my implementation, idempotency keys live forever in memory. This causes two issues:
+
+- Memory bloat: Unbounded growth over time
+- Industry non-compliance: Payment processors (Stripe, PayPal) expire keys after 24 hours
+
+#### The Solution
+Implement automatic expiration of idempotency keys after 24 hours.
+
+### Implementation Approach (Conceptual Code)
+```java
+// Enhanced storage with timestamp
+public class TimestampedResponse {
+    StoredResponse response;
+    long createdAt;
+    
+    public TimestampedResponse(StoredResponse response) {
+        this.response = response;
+        this.createdAt = System.currentTimeMillis();
+    }
+    
+    public boolean isExpired() {
+        long TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+        return System.currentTimeMillis() - createdAt > TWENTY_FOUR_HOURS;
+    }
+}
+
+// Scheduled cleanup job
+@Component
+public class IdempotencyCleanupScheduler {
+    
+    @Scheduled(fixedRate = 3600000) // Run every hour
+    public void cleanupExpiredKeys() {
+        storage.entrySet().removeIf(entry -> entry.getValue().isExpired());
+    }
+}
+```
+### Why This Matters for Fintech
+
+| Benefit | Explaation | Required | Constraints | Description |
+|---------|------------|----------|-------------|-------------|
+| Memory Management | Prevents unbounded growth in production systems | 
+| PCI Compliance | Meets payment industry standards for data retention | 
+| User Privacy | Automatically removes customer transaction data |
+| Legitimate Reuse | After 24 hours, a new transaction can reuse the same key |
+| Industry Standard | Stripe (24h), PayPal (48h), Square (24h) all expire keys |
+
+### Alternative Implementations Considered
+
+| Approach | Pros | Cons | Verdict |
+|----------|------|------|---------|
+| Redis TTL | Built-in expiration, distributed | Requires Redis setup | Best for production | 
+| Scheduled Cleanup | Simple, no dependencies | Slight memory overhead | Chosen for this demo |
+| Lazy Expiration | Check expiry on access | Expired keys remain in memory | Not ideal |
+
+### Why I Chose Scheduled Cleanup
+- Zero external dependencies (no Redis setup required)
+- Easy to demonstrate and explain
+- Can be easily replaced with Redis TTL in production
+- Runs efficiently (once per hour)
+
+## Tech Stack
+### Core Technologies
+
+| Technology | Version | Purpose | 
+|------------|---------|---------|
+| Java | 17 (OpenJDK Temurin) | Primary programming language |
+| Spring Boot | 3.5.14 | Application framework |
+| Spring Web | Embedded | REST API support | 
+| Maven | 3.9+ | Build automation |
+
+### Concurrency & Data Structures
+
+| Component | Purpose | 
+|-----------|---------|
+| ConcurrentHashMap | Thread-safe key-value storage | 
+| synchronized blocks | Mutual exclusion for critical sections |
+| Objects.equals() | Null-safe comparison | 
+
+### Development Tools
+
+| Tool | Purpose | 
+|------|---------|
+| IntelliJ IDEA Ultimate | IDE | 
+| Postman | API Testing |
+| Git | Version control | 
+| GitHub | Repository hosting |
