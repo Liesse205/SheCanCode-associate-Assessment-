@@ -205,5 +205,62 @@ X-Cache-Hit: true
 ```
 Timing: Instant (no 2-second delay)
 
+#### 409 Conflict - Same Key, Different Body
+Scenario: Client reuses an idempotency key with different payment details
+
+##### Response Body:
+
+```json
+{
+    "error": "Idempotency key already used for a different request body."
+}
+```
+Status Code: 409 CONFLICT
+
+#### 400 Bad Request - Validation Errors
+##### Missing Idempotency-Key Header:
+
+```json
+{
+    "error": "Idempotency-Key header is required"
+}
+```
+##### Missing or Invalid Amount:
+
+```json
+{
+    "error": "Valid amount is required"
+}
+```
+##### Missing or Empty Currency:
+
+```json
+{
+    "error": "Currency is required"
+}
+```
+#### Example cURL Commands
+##### First Request (Takes 2 seconds)
+```bash
+curl -X POST http://localhost:8080/process-payment \
+  -H "Idempotency-Key: payment-abc-123" \
+  -H "Content-Type: application/json" \
+  -d '{"amount": 100, "currency": "RWF"}'
+```
+##### Duplicate Request (Instant)
+```bash
+# Same command - will return instantly with X-Cache-Hit header
+curl -X POST http://localhost:8080/process-payment \
+  -H "Idempotency-Key: payment-abc-123" \
+  -H "Content-Type: application/json" \
+  -d '{"amount": 100, "currency": "RWF"}'
+```
+##### Different Body (Returns 409 Error)
+```bash
+curl -X POST http://localhost:8080/process-payment \
+  -H "Idempotency-Key: payment-abc-123" \
+  -H "Content-Type: application/json" \
+  -d '{"amount": 500, "currency": "RWF"}'
+```
 
 
