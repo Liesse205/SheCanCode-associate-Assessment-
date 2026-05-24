@@ -176,7 +176,8 @@ Press Ctrl + C in the terminal.
 ### Response Codes & Examples
 
 200 OK - First Request (Processing)
-Response Body:
+
+#### Response Body:
 
 ```bash
 {
@@ -186,7 +187,8 @@ Response Body:
 }
 ```
 Timing: Takes exactly 2 seconds (simulates bank API call)
-Headers:
+
+#### Headers:
 
 ```bash
 Content-Type: application/json
