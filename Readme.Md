@@ -1,6 +1,6 @@
-# Idempotency Gateway - Payment Processing System
+# Idempotency Gateway - The "Pay-Once" Protocol
 
-A production-ready idempotency layer that prevents double charging in payment systems. Built for IgirePay Technologies as part of the SheCanCODE Java Backend Associate Program.
+This project simulates a payment gateway built with Spring Boot that prevents duplicate payment processing when the same request is sent multiple times. It was developed as part of the IgirePay Technologies backend engineering challenge under the SheCanCODE Java Backend Associate Program.
 
 ## Table of Contents
 
