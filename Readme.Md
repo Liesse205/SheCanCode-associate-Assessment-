@@ -424,24 +424,6 @@ public class IdempotencyCleanupScheduler {
 | Git | Version control | 
 | GitHub | Repository hosting |
 
-
-```
-CLIENT                  GATEWAY                  STORAGE
-  |                        |                         |
-  |--POST /process-payment→|                         |
-  |  (Idempotency-Key)     |                         |
-  |                        |--Key exists?----------→|
-  |                        |←--No--------------------|
-  |                        |                         |
-  |                        |--Acquire lock-----------|
-  |                        |--Process (2 sec delay)--|
-  |                        |--Store response--------→|
-  |                        |--Release lock-----------|
-  |←--200 OK---------------|                         |
-  |                        |                         |
-  |--Same request again---→|                         |
-  |                        |--Key exists?----------→|
-  |                        |←--Yes-------------------|
   |←--200 + X-Cache-Hit----|                         |
 
 ```
