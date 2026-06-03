@@ -87,10 +87,10 @@ sequenceDiagram
 
 | Requirement | Version | Installation Link |
 |-------------|---------|-------------------|
-| Java JDK | 17+ | [Eclipse Temurin](https://adoptium.net/) |
-| Git | Latest | [git-scm.com](https://git-scm.com/) |
-| Maven | 3.8+ | Included via wrapper |
-| Postman (optional) | Latest | [postman.com](https://postman.com) |
+| Java JDK    | 17+ | [Eclipse Temurin](https://adoptium.net/) |
+| Git         | Latest | [git-scm.com](https://git-scm.com/) |
+| Maven       | 3.8+ | Included via wrapper |
+| Postman     | Latest | [postman.com](https://postman.com) |
 
 ### Installation Steps
 
